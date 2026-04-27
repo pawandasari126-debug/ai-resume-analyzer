@@ -9,13 +9,13 @@ uploaded_file = st.file_uploader("Upload Resume (PDF only)", type=["pdf"])
 
 if uploaded_file is not None:
 
-    import pdfplumber
+    from PyPDF2 import PdfReader
+
+    reader = PdfReader(uploaded_file)
 
     text = ""
-
-    with pdfplumber.open(uploaded_file) as pdf:
-        for page in pdf.pages:
-            text += page.extract_text() or ""
+    for page in reader.pages:
+        text += page.extract_text() or ""
 
     st.subheader("📄 Extracted Text")
     st.write(text[:1000])
