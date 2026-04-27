@@ -1,6 +1,5 @@
 import streamlit as st
-from reportlab.platypus import SimpleDocTemplate, Paragraph
-from reportlab.lib.styles import getSampleStyleSheet
+
 st.set_page_config(page_title="AI Resume Analyzer", page_icon="📄")
 
 st.title("📄 AI Resume Analyzer")
@@ -73,28 +72,3 @@ if uploaded_file is not None:
     else:
         st.error("Improve resume by adding skills, projects, and experience.")
 
-# 🔹 Generate PDF Report
-    def create_pdf(text, skills, score):
-        file_path = "resume_report.pdf"
-
-        doc = SimpleDocTemplate(file_path)
-        styles = getSampleStyleSheet()
-
-        content = []
-
-        content.append(Paragraph("AI Resume Report", styles['Title']))
-        content.append(Paragraph(f"Score: {score}/10", styles['Normal']))
-        content.append(Paragraph(f"Skills: {', '.join(skills)}", styles['Normal']))
-        content.append(Paragraph(" ", styles['Normal']))
-        content.append(Paragraph("Resume Content:", styles['Heading2']))
-        content.append(Paragraph(text[:1000], styles['Normal']))
-
-        doc.build(content)
-
-        return file_path
-
-
-    pdf_file = create_pdf(text, found_skills, score)
-
-    with open(pdf_file, "rb") as f:
-        st.download_button("📥 Download Report", f, file_name="resume_report.pdf")
