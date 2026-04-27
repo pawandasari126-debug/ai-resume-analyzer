@@ -1,5 +1,4 @@
 import streamlit as st
-from PyPDF2 import PdfReader
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 st.set_page_config(page_title="AI Resume Analyzer", page_icon="📄")
