@@ -1,63 +1,44 @@
 import streamlit as st
-
-st.set_page_config(page_title="AI Resume Analyzer", page_icon="📄")
+from PyPDF2 import PdfReader
 
 st.title("📄 AI Resume Analyzer")
-st.write("Upload your resume and get insights")
 
 uploaded_file = st.file_uploader("Upload Resume (PDF only)", type=["pdf"])
 
 if uploaded_file is not None:
 
-    from PyPDF2 import PdfReader
-
+    # 🔹 Extract text from PDF
     reader = PdfReader(uploaded_file)
-
     text = ""
+
     for page in reader.pages:
         text += page.extract_text() or ""
 
+    # 🔹 Show extracted text (preview)
     st.subheader("📄 Extracted Text")
     st.write(text[:1000])
 
-    # 🔹 Skills
+    # 🔹 Skills list
     skills = [
-        "python", "machine learning", "data science", "sql",
-        "excel", "power bi", "tableau", "deep learning",
-        "nlp", "pandas", "numpy", "streamlit"
+        "python", "machine learning", "sql", "excel",
+        "power bi", "tableau", "pandas", "numpy"
     ]
 
+    # 🔹 Find skills
     found_skills = []
-
     for skill in skills:
-        if skill.lower() in text.lower():
+        if skill in text.lower():
             found_skills.append(skill)
 
+    # 🔹 Show skills
     st.subheader("🧠 Skills Detected")
-
     if found_skills:
         st.success(", ".join(found_skills))
     else:
-        st.warning("No relevant skills found")
+        st.warning("No skills detected")
 
-    # 🔹 SCORE
-    score = 0
-
-    if len(found_skills) >= 5:
-        score += 5
-    elif len(found_skills) >= 3:
-        score += 3
-    else:
-        score += 1
-
-    if len(text) > 1000:
-        score += 3
-    elif len(text) > 500:
-        score += 2
-    else:
-        score += 1
-
-    score = min(score, 10)
+    # 🔹 Score
+    score = min(len(found_skills), 10)
 
     st.subheader("📊 Resume Score")
     st.success(f"{score} / 10")
@@ -66,9 +47,33 @@ if uploaded_file is not None:
     st.subheader("💡 Suggestions")
 
     if score >= 8:
-        st.success("Great resume! Just refine formatting and clarity.")
+        suggestion = "Great resume! Just refine formatting and clarity."
+        st.success(suggestion)
     elif score >= 5:
-        st.warning("Good resume, but add more projects and details.")
+        suggestion = "Good, but add more skills/projects."
+        st.warning(suggestion)
     else:
-        st.error("Improve resume by adding skills, projects, and experience.")
+        suggestion = "Needs improvement. Add more relevant skills and projects."
+        st.error(suggestion)
 
+    # 🔹 Create report
+    report = f"""
+AI Resume Analysis Report
+
+Skills Detected:
+{', '.join(found_skills) if found_skills else 'None'}
+
+Score:
+{score}/10
+
+Suggestions:
+{suggestion}
+"""
+
+    # 🔹 Download button
+    st.download_button(
+        label="📥 Download Report",
+        data=report,
+        file_name="resume_report.txt",
+        mime="text/plain"
+    )
