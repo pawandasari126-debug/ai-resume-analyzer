@@ -1,5 +1,5 @@
 import streamlit as st
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 import re
 
 st.set_page_config(page_title="AI Resume Analyzer", layout="centered")
